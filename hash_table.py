@@ -2,12 +2,21 @@
 #平均查找长度ASL计算：https://www.cnblogs.com/ygsworld/p/10238729.html
 
 def get_hash_table(length, key_list):
-    #哈希表初始化
+    
+    #按照线性探测法生成哈希表，返回查找成功长度
+    hash_table, suc_count = linear_hash(key_list, length)
+
+    #计算查找不成功长度
+    err_count = 0
+    for i in range(length):
+        temp_hash = hash_table[i:length] + hash_table[0:i]
+        err_count += temp_hash.index(-1)+1
+
+    return hash_table, suc_count, err_count
+
+def linear_hash(key_list, length):
     hash_table = [-1 for i in range(length)]
     suc_count = 0
-    err_count = 0
-    
-    #按照线性探测法生成哈希表，并计算查找成功长度
     for key in key_list:
         H = key % 13
         for index in range(H,len(hash_table)):
@@ -15,13 +24,7 @@ def get_hash_table(length, key_list):
             if hash_table[index] == -1:
                 hash_table[index] = key
                 break
-
-    #计算查找不成功长度
-    for i in range(length):
-        temp_hash = hash_table[i:length] + hash_table[0:i]
-        err_count += temp_hash.index(-1)+1
-
-    return hash_table, suc_count, err_count
+    return hash_table, suc_count
 
 def print_hash_ASL(keys, length):
     key_list = keys
